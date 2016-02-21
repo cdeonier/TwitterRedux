@@ -194,7 +194,7 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func newTweetController(tweet: Tweet) {
-        print("adding tweet" + tweet.text!)
+        insertNewTweet(tweet)
     }
     
     func tweetDetailViewController(tweet: Tweet) {
@@ -202,9 +202,7 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tweetDetailViewController(tweet: Tweet, replyTweet: Tweet) {
-
-        
-        
+        insertNewTweet(tweet)
     }
     
     func refreshTweet(tweet: Tweet) {
@@ -217,6 +215,7 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func insertNewTweet(tweet: Tweet) {
         tweets!.insert(tweet, atIndex: 0)
+        tableView.reloadData()
     }
     
     // MARK: - Navigation

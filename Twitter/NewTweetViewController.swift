@@ -86,9 +86,14 @@ class NewTweetViewController: UIViewController, UITextViewDelegate {
         tweet.text = tweetText
         tweet.user = user
         
-        delegate?.newTweetController(tweet)
-        
-        print(tweetText)
+        tweet.tweet { (tweet, error) -> () in
+            if let tweet = tweet {
+                self.delegate?.newTweetController(tweet)
+                self.dismissViewControllerAnimated(true, completion: nil)
+            } else {
+                print(error?.description)
+            }
+        }
     }
     
     func makeTweet(tweetText: String) {
@@ -96,8 +101,6 @@ class NewTweetViewController: UIViewController, UITextViewDelegate {
         tweet.user = user
         tweet.text = tweetText
         tweet.createdAt = NSDate()
-        
-        
     }
 
     /*
