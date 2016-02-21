@@ -8,11 +8,12 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NewTweetDelegate, TweetDelegate, TweetCellDelegate {
+class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NewTweetDelegate, TweetDelegate, TweetCellDelegate, UIScrollViewDelegate {
     
     var tweets: [Tweet]?
     var replyToTweet: Tweet?
     var refreshControl: UIRefreshControl?
+    var requestedTweetCount: Int = 20
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -57,11 +58,23 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         tableView.insertSubview(refreshControl!, atIndex: 0)
     }
     
+    func refreshTweets() {
+        requestedTweetCount = 20
+        getTweets()
+    }
+    
     func getTweets() {
-        TwitterClient.sharedInstance.homeTimelineWithParams(nil) { (tweets: [Tweet]?, error: NSError?) -> () in
+        let params = NSDictionary(dictionary: ["count" : requestedTweetCount])
+        TwitterClient.sharedInstance.homeTimelineWithParams(params) { (tweets: [Tweet]?, error: NSError?) -> () in
             if let error = error {
                 print(error)
             } else {
+                if self.requestedTweetCount == 20 {
+                    self.tweets = tweets
+                } else {
+                    self.tweets = Tweet.mergeTweets(self.tweets!, additionalTweets: tweets!)
+                }
+                
                 self.tweets = tweets
                 self.tableView.reloadData()
                 self.refreshControl?.endRefreshing()
@@ -216,6 +229,22 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     func insertNewTweet(tweet: Tweet) {
         tweets!.insert(tweet, atIndex: 0)
         tableView.reloadData()
+    }
+    
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let scrollViewOffset = scrollView.contentOffset
+        let bounds = scrollView.bounds
+        let size = scrollView.contentSize
+        let insets = scrollView.contentInset
+        
+        let y = scrollViewOffset.y + bounds.size.height - insets.bottom
+        let h = size.height
+        
+        let reloadDistance = 50
+        if (Int(y) > Int(h) + reloadDistance) {
+            requestedTweetCount += 20
+            getTweets()
+        }
     }
     
     // MARK: - Navigation

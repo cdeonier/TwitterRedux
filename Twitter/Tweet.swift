@@ -86,6 +86,16 @@ class Tweet {
         return nil
     }
     
+    class func mergeTweets(originalTweets: [Tweet], additionalTweets: [Tweet]) -> [Tweet] {
+        var combinedTweets: [Tweet] = originalTweets
+        for additionalTweet in additionalTweets {
+            if !originalTweets.contains({ $0.id == additionalTweet.id }) {
+                combinedTweets.append(additionalTweet)
+            }
+        }
+        return combinedTweets
+    }
+    
     func tweet(completion: (tweet: Tweet?, error: NSError?) -> ()) {
         TwitterClient.sharedInstance.postTweet(self, completion: completion)
     }
