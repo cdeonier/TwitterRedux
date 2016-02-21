@@ -8,9 +8,10 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NewTweetDelegate, TweetDelegate {
+class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NewTweetDelegate, TweetDelegate, TweetCellDelegate {
     
     var tweets: [Tweet]?
+    var replyToTweet: Tweet?
     var refreshControl: UIRefreshControl?
 
     @IBOutlet weak var tableView: UITableView!
@@ -110,7 +111,12 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 cell.retweetIndicator.hidden = true
             }
             
+            cell.retweetButton.selected = tweet.retweeted!
+            cell.favoriteButton.selected = tweet.favorited!
+            
             setTimeOfCell(cell, tweet: tweet)
+            
+            cell.delegate = self
         }
     }
     
@@ -135,12 +141,82 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
     }
     
+    func tweetCell(tweetCell: TweetCell, didFavorite: Bool?) {
+        let indexPath = tableView.indexPathForCell(tweetCell)
+        let tweet = tweets![indexPath!.row]
+        tweet.favorited = didFavorite
+        if didFavorite! {
+            tweet.favorite({ (tweet, error) -> () in
+                if let tweet = tweet {
+                    self.refreshTweet(tweet)
+                } else {
+                    print(error?.description)
+                }
+            })
+        } else {
+            tweet.unfavorite({ (tweet, error) -> () in
+                if let tweet = tweet {
+                    self.refreshTweet(tweet)
+                } else {
+                    print(error?.description)
+                }
+            })
+        }
+    }
+    
+    func tweetCell(tweetCell: TweetCell, didRetweet: Bool?) {
+        let indexPath = tableView.indexPathForCell(tweetCell)
+        let tweet = tweets![indexPath!.row]
+        tweet.retweeted = didRetweet
+        if didRetweet! {
+            tweet.retweet({ (tweet, error) -> () in
+                if let tweet = tweet {
+                    self.refreshTweet(tweet)
+                } else {
+                    print(error?.description)
+                }
+            })
+        } else {
+            tweet.unretweet({ (tweet, error) -> () in
+                if let tweet = tweet {
+                    self.refreshTweet(tweet)
+                } else {
+                    print(error?.description)
+                }
+            })
+        }
+    }
+    
+    func tweetCell(tweetCell: TweetCell, didReply: Bool?) {
+        let indexPath = tableView.indexPathForCell(tweetCell)
+        replyToTweet = tweets![indexPath!.row]
+        self.performSegueWithIdentifier("newTweet", sender: self)
+    }
+    
     func newTweetController(tweet: Tweet) {
         print("adding tweet" + tweet.text!)
     }
     
     func tweetDetailViewController(tweet: Tweet) {
-        print("do something with this tweet")
+        refreshTweet(tweet)
+    }
+    
+    func tweetDetailViewController(tweet: Tweet, replyTweet: Tweet) {
+
+        
+        
+    }
+    
+    func refreshTweet(tweet: Tweet) {
+        let index = Tweet.indexForTweetInArray(tweet, array: tweets!)
+        if let index = index {
+            tweets![index] = tweet
+            tableView.reloadData()
+        }
+    }
+    
+    func insertNewTweet(tweet: Tweet) {
+        tweets!.insert(tweet, atIndex: 0)
     }
     
     // MARK: - Navigation
@@ -151,6 +227,11 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
             let navController = segue.destinationViewController as! UINavigationController
             let vc = navController.topViewController as! NewTweetViewController
             vc.delegate = self
+            
+            if let replyToTweet = replyToTweet {
+                vc.replyToTweet = replyToTweet
+                self.replyToTweet = nil
+            }
         } else if (segue.identifier == "tweetDetails") {
             let navController = segue.destinationViewController as! UINavigationController
             let vc = navController.topViewController as! TweetDetailViewController
@@ -161,8 +242,5 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
             let tweet = tweets![index!.row]
             vc.tweet = tweet
         }
-        
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
     }
 }

@@ -10,6 +10,7 @@ import UIKit
 
 class Tweet {
     
+    var id: Int?
     var user: User?
     var retweetingUser: User?
     var text: String?
@@ -20,6 +21,8 @@ class Tweet {
     var favorited: Bool?
     var retweetCount: Int?
     var favoriteCount: Int?
+    var replyToTweetId: Int?
+    var retweeted: Bool?
     
     init() {
         createdAt = NSDate()
@@ -45,12 +48,15 @@ class Tweet {
             tweetDictionary = dictionary
         }
         
+        id = tweetDictionary["id"] as? Int
         user = User(dictionary: tweetDictionary["user"] as! NSDictionary)
         text = tweetDictionary["text"] as? String
         createdAtString  = tweetDictionary["created_at"] as? String
         favorited = tweetDictionary["favorited"] as? Bool
         retweetCount = tweetDictionary["retweet_count"] as? Int
         favoriteCount = tweetDictionary["favorite_count"] as? Int
+        retweeted = tweetDictionary["retweeted"] as? Bool
+        replyToTweetId = tweetDictionary["in_reply_to_status_id_str"] as? Int
         self.dictionary = dictionary as NSDictionary
         
         let formatter = NSDateFormatter()
@@ -70,5 +76,33 @@ class Tweet {
         
         return tweets
     }
-
+    
+    class func indexForTweetInArray(tweet: Tweet, array: [Tweet]) -> Int? {
+        for (index, possibleTweet) in array.enumerate() {
+            if possibleTweet.id == tweet.id {
+                return index
+            }
+        }
+        return nil
+    }
+    
+    func tweet(completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        TwitterClient.sharedInstance.postTweet(self, completion: completion)
+    }
+    
+    func retweet(completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        TwitterClient.sharedInstance.retweet(self, completion: completion)
+    }
+    
+    func unretweet(completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        TwitterClient.sharedInstance.unretweet(self, completion: completion)
+    }
+    
+    func favorite(completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        TwitterClient.sharedInstance.favorite(self, completion: completion)
+    }
+    
+    func unfavorite(completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        TwitterClient.sharedInstance.unfavorite(self, completion: completion)
+    }
 }

@@ -10,12 +10,14 @@ import UIKit
 
 protocol TweetDelegate {
     func tweetDetailViewController(tweet: Tweet)
+    func tweetDetailViewController(tweet: Tweet, replyTweet: Tweet)
 }
 
-class TweetDetailViewController: UIViewController {
+class TweetDetailViewController: UIViewController, NewTweetDelegate {
     
     var tweet: Tweet?
     var delegate: TweetDelegate?
+    var replyToTweet: Tweet?
 
     @IBOutlet weak var retweetIndicator: UIImageView!
     @IBOutlet weak var retweetAuthor: UILabel!
@@ -29,6 +31,7 @@ class TweetDetailViewController: UIViewController {
     @IBOutlet weak var numberFavoritesLabel: UILabel!
     @IBOutlet weak var favoriteButton: UIButton!
     @IBOutlet weak var retweetIndicatorHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var retweetButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +75,9 @@ class TweetDetailViewController: UIViewController {
             
             avatarImage.layer.cornerRadius = 5
             avatarImage.clipsToBounds = true
+            
+            retweetButton.selected = tweet.retweeted!
+            favoriteButton.selected = tweet.favorited!
         }
     }
     
@@ -79,33 +85,75 @@ class TweetDetailViewController: UIViewController {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
+    func newTweetController(tweet: Tweet) {
+        delegate?.tweetDetailViewController(self.tweet!, replyTweet: tweet)
+    }
+    
     @IBAction func reply(sender: AnyObject) {
-        
+        self.performSegueWithIdentifier("replyTweet", sender: self)
     }
 
     @IBAction func retweet(sender: AnyObject) {
+        let didRetweet = !retweetButton.selected
         
+        if didRetweet {
+            tweet!.retweet({ (tweet, error) -> () in
+                if let tweet = tweet {
+                    self.retweetButton.selected = true
+                    self.numberRetweetsLabel.text = "\(tweet.retweetCount!)"
+                    self.delegate?.tweetDetailViewController(tweet)
+                } else {
+                    print(error?.description)
+                }
+            })
+        } else {
+            tweet!.unretweet({ (tweet, error) -> () in
+                if let tweet = tweet {
+                    self.retweetButton.selected = false
+                    self.numberRetweetsLabel.text = "\(tweet.retweetCount!)"
+                    self.delegate?.tweetDetailViewController(tweet)
+                } else {
+                    print(error?.description)
+                }
+            })
+        }
     }
     
     @IBAction func favorite(sender: AnyObject) {
-        if favoriteButton.selected {
-            
-        } else {
-            
-        }
+        let didFavorite = !favoriteButton.selected
         
-        favoriteButton.selected = !favoriteButton.selected
+        if didFavorite {
+            tweet!.favorite({ (tweet, error) -> () in
+                if let tweet = tweet {
+                    self.favoriteButton.selected = true
+                    self.numberFavoritesLabel.text = "\(tweet.favoriteCount!)"
+                    self.delegate?.tweetDetailViewController(tweet)
+                } else {
+                    print(error?.description)
+                }
+            })
+        } else {
+            tweet!.unfavorite({ (tweet, error) -> () in
+                if let tweet = tweet {
+                    self.favoriteButton.selected = false
+                    self.numberFavoritesLabel.text = "\(tweet.favoriteCount!)"
+                    self.delegate?.tweetDetailViewController(tweet)
+                } else {
+                    print(error?.description)
+                }
+            })
+        }
     }
     
-
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "replyTweet" {
+            let navController = segue.destinationViewController as! UINavigationController
+            let vc = navController.topViewController as! NewTweetViewController
+            vc.delegate = self
+            vc.replyToTweet = tweet
+        }
     }
-    */
-
 }

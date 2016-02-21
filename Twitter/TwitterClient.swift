@@ -48,6 +48,71 @@ class TwitterClient : BDBOAuth1RequestOperationManager {
         }
     }
     
+    func postTweet(tweet: Tweet, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        let params = NSMutableDictionary()
+        params["status"] = tweet.text
+        if let replyToTweetId = tweet.replyToTweetId {
+            params["in_reply_to_status_id"] = replyToTweetId
+        }
+        
+        POST("1.1/statuses/update.json", parameters: params, success: { (operation: AFHTTPRequestOperation, response: AnyObject) -> Void in
+            let tweet = Tweet(dictionary: response as! NSDictionary)
+            completion(tweet: tweet, error: nil)
+            }) { (operation: AFHTTPRequestOperation?, error: NSError) -> Void in
+                NSLog("Error posting tweet")
+                completion(tweet: nil, error: error)
+        }
+    }
+    
+    func retweet(tweet: Tweet, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        POST("1.1/statuses/retweet/\(tweet.id!).json", parameters: nil, success: { (operation: AFHTTPRequestOperation, response: AnyObject) -> Void in
+            let tweet = Tweet(dictionary: response as! NSDictionary)
+            print(response["retweet_count"])
+            tweet.retweeted = true
+            completion(tweet: tweet, error: nil)
+            }) { (operation: AFHTTPRequestOperation?, error: NSError) -> Void in
+                NSLog("Error posting tweet")
+                completion(tweet: nil, error: error)
+        }
+    }
+    
+    func unretweet(tweet: Tweet, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        POST("1.1/statuses/unretweet/\(tweet.id!).json", parameters: nil, success: { (operation: AFHTTPRequestOperation, response: AnyObject) -> Void in
+            let tweet = Tweet(dictionary: response as! NSDictionary)
+            print(response["retweet_count"])
+            tweet.retweeted = false
+            tweet.retweetCount = tweet.retweetCount! - 1
+            completion(tweet: tweet, error: nil)
+            }) { (operation: AFHTTPRequestOperation?, error: NSError) -> Void in
+                NSLog("Error posting tweet")
+                completion(tweet: nil, error: error)
+        }
+    }
+    
+    func favorite(tweet: Tweet, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        let params = NSDictionary(dictionary: ["id": tweet.id!])
+        POST("1.1/favorites/create.json", parameters: params, success: { (operation: AFHTTPRequestOperation, response: AnyObject) -> Void in
+            let tweet = Tweet(dictionary: response as! NSDictionary)
+            tweet.favorited = true
+            completion(tweet: tweet, error: nil)
+            }) { (operation: AFHTTPRequestOperation?, error: NSError) -> Void in
+                NSLog("Error favoriting tweet")
+                completion(tweet: nil, error: error)
+        }
+    }
+    
+    func unfavorite(tweet: Tweet, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        let params = NSDictionary(dictionary: ["id": tweet.id!])
+        POST("1.1/favorites/destroy.json", parameters: params, success: { (operation: AFHTTPRequestOperation, response: AnyObject) -> Void in
+            let tweet = Tweet(dictionary: response as! NSDictionary)
+            tweet.favorited = false
+            completion(tweet: tweet, error: nil)
+            }) { (operation: AFHTTPRequestOperation?, error: NSError) -> Void in
+                NSLog("Error unfavoriting tweet")
+                completion(tweet: nil, error: error)
+        }
+    }
+    
     func getAccessToken(url: NSURL) {
         fetchAccessTokenWithPath("oauth/access_token", method: "POST", requestToken: BDBOAuth1Credential(queryString: url.query), success: { (credential: BDBOAuth1Credential!) -> Void in
             TwitterClient.sharedInstance.requestSerializer.saveAccessToken(credential)

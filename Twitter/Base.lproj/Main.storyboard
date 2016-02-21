@@ -126,6 +126,7 @@
                                                         <constraint firstAttribute="width" constant="18" id="dpj-YD-8rp"/>
                                                     </constraints>
                                                     <state key="normal" title="Retweet Button" image="Retweet"/>
+                                                    <state key="selected" image="Retweeted"/>
                                                     <connections>
                                                         <action selector="onRetweet:" destination="QYO-nT-VSz" eventType="touchUpInside" id="Du0-TG-ihh"/>
                                                     </connections>
@@ -183,8 +184,10 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="avatarImageView" destination="AE3-Pt-UfX" id="SVP-JN-loJ"/>
+                                            <outlet property="favoriteButton" destination="hu8-jj-eVn" id="cPX-rv-S8b"/>
                                             <outlet property="handleLabel" destination="o6B-XV-n8i" id="l2F-ui-o1m"/>
                                             <outlet property="retweetAuthor" destination="g9V-Sr-yHB" id="19j-zV-IeT"/>
+                                            <outlet property="retweetButton" destination="dzi-0m-hKJ" id="ef7-WO-gFy"/>
                                             <outlet property="retweetIndicator" destination="fme-1t-5OL" id="73S-3V-vER"/>
                                             <outlet property="retweetIndicatorHeightConstraint" destination="ecn-Gb-dyU" id="LSq-iZ-Chv"/>
                                             <outlet property="timeElapsedLabel" destination="MzS-gG-XuR" id="nGX-qu-tkl"/>
@@ -426,7 +429,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FAVORITES" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eak-W2-iX6">
-                                <rect key="frame" x="196" y="218" width="79" height="18"/>
+                                <rect key="frame" x="196" y="218" width="78.5" height="18"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -454,8 +457,7 @@
                                     </mask>
                                 </variation>
                                 <connections>
-                                    <action selector="reply" destination="6I8-Im-Dm5" eventType="touchUpInside" id="9bl-ju-BM1"/>
-                                    <action selector="reply:" destination="6I8-Im-Dm5" eventType="touchUpInside" id="obB-jA-wFO"/>
+                                    <action selector="reply:" destination="6I8-Im-Dm5" eventType="touchUpInside" id="o9a-1w-ORT"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F2x-IU-9K7">
@@ -467,6 +469,7 @@
                                     <constraint firstAttribute="height" constant="18" id="xbx-rw-cNV"/>
                                 </constraints>
                                 <state key="normal" title="Button" image="Retweet"/>
+                                <state key="selected" image="Retweeted"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="LNc-4Y-oO7"/>
@@ -474,7 +477,7 @@
                                     </mask>
                                 </variation>
                                 <connections>
-                                    <action selector="retweet:" destination="6I8-Im-Dm5" eventType="touchUpInside" id="DE3-qC-u8k"/>
+                                    <action selector="retweet:" destination="6I8-Im-Dm5" eventType="touchUpInside" id="weD-zh-6dv"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Michael Moran" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1vK-c6-vjE">
@@ -505,7 +508,7 @@
                                 <state key="normal" title="Button" image="Unfavorite"/>
                                 <state key="selected" image="Favorite"/>
                                 <connections>
-                                    <action selector="favorite:" destination="6I8-Im-Dm5" eventType="touchUpInside" id="p7k-TL-eg2"/>
+                                    <action selector="favorite:" destination="6I8-Im-Dm5" eventType="touchUpInside" id="u1q-4K-N0B"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -534,6 +537,7 @@
                             <constraint firstItem="yIP-z7-pSx" firstAttribute="bottom" secondItem="GXW-cs-Y2R" secondAttribute="bottom" id="SHV-im-3TC"/>
                             <constraint firstItem="iN7-g4-KJt" firstAttribute="trailing" secondItem="GXW-cs-Y2R" secondAttribute="trailing" id="SRZ-BM-j1T"/>
                             <constraint firstItem="dMl-ac-iSd" firstAttribute="top" relation="greaterThanOrEqual" secondItem="9a3-BN-JOF" secondAttribute="bottom" constant="10" id="Uff-cc-S1E"/>
+                            <constraint firstItem="iN7-g4-KJt" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ebs-Kx-yBP" secondAttribute="leading" constant="20" id="Zl4-2y-aqp"/>
                             <constraint firstItem="4PO-xS-WUb" firstAttribute="top" secondItem="jDd-b2-GIW" secondAttribute="bottom" constant="8" id="Zn2-PM-B4b"/>
                             <constraint firstItem="Z9q-3L-I0q" firstAttribute="top" secondItem="1vK-c6-vjE" secondAttribute="bottom" constant="3" id="cKV-91-5kV"/>
                             <constraint firstAttribute="trailing" secondItem="rFF-la-vMm" secondAttribute="trailing" constant="8" id="crb-av-hgI"/>
@@ -587,10 +591,12 @@
                         <outlet property="numberFavoritesLabel" destination="yIP-z7-pSx" id="aPh-16-2Nu"/>
                         <outlet property="numberRetweetsLabel" destination="GXW-cs-Y2R" id="SS8-YD-yrs"/>
                         <outlet property="retweetAuthor" destination="uCa-M8-uyf" id="o6y-gb-NTy"/>
+                        <outlet property="retweetButton" destination="F2x-IU-9K7" id="vrO-QJ-s0T"/>
                         <outlet property="retweetIndicator" destination="pBI-Ot-QoX" id="F3F-eo-VJv"/>
                         <outlet property="retweetIndicatorHeightConstraint" destination="rTN-mo-N3P" id="Rse-mw-7Ab"/>
                         <outlet property="timestampLabel" destination="Qgm-lA-S6L" id="UMc-7D-pKT"/>
                         <outlet property="tweetLabel" destination="4PO-xS-WUb" id="80N-Uo-6X1"/>
+                        <segue destination="anv-OH-WcZ" kind="presentation" identifier="replyTweet" id="u7r-PN-LBe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rjG-o4-nXb" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -638,6 +644,10 @@
         <image name="Favorite" width="12" height="12"/>
         <image name="Reply" width="12" height="12"/>
         <image name="Retweet" width="12" height="12"/>
+        <image name="Retweeted" width="12" height="12"/>
         <image name="Unfavorite" width="12" height="12"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="u7r-PN-LBe"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -8,7 +8,15 @@
 
 import UIKit
 
+protocol TweetCellDelegate {
+    func tweetCell(tweetCell: TweetCell, didReply: Bool?)
+    func tweetCell(tweetCell: TweetCell, didRetweet: Bool?)
+    func tweetCell(tweetCell: TweetCell, didFavorite: Bool?)
+}
+
 class TweetCell: UITableViewCell {
+    
+    var delegate: TweetCellDelegate?
     
     @IBOutlet weak var avatarImageView: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
@@ -18,6 +26,8 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var retweetAuthor: UILabel!
     @IBOutlet weak var retweetIndicatorHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeElapsedLabel: UILabel!
+    @IBOutlet weak var retweetButton: UIButton!
+    @IBOutlet weak var favoriteButton: UIButton!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,11 +45,23 @@ class TweetCell: UITableViewCell {
     }
 
     @IBAction func onReply(sender: UIButton) {
+        delegate?.tweetCell(self, didReply: true)
     }
+    
     @IBAction func onRetweet(sender: UIButton) {
+        if retweetButton.selected {
+            delegate?.tweetCell(self, didRetweet: false)
+        } else {
+            delegate?.tweetCell(self, didRetweet: true)
+        }
     }
+    
     @IBAction func onFavorite(sender: UIButton) {
-        
+        if favoriteButton.selected {
+            delegate?.tweetCell(self, didFavorite: false)
+        } else {
+            delegate?.tweetCell(self, didFavorite: true)
+        }
     }
     
 }

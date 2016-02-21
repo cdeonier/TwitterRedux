@@ -16,6 +16,7 @@ class NewTweetViewController: UIViewController, UITextViewDelegate {
     
     var user: User = User.currentUser!
     var delegate: NewTweetDelegate?
+    var replyToTweet: Tweet?
 
     @IBOutlet weak var avatarImageView: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
@@ -54,7 +55,13 @@ class NewTweetViewController: UIViewController, UITextViewDelegate {
         avatarImageView.layer.cornerRadius = 5
         avatarImageView.clipsToBounds = true
         
-        tweetTextView.text = ""
+        if let replyToTweet = replyToTweet {
+            tweetTextView.text = "@\((replyToTweet.user?.screenname!)!) "
+            textViewDidChange(tweetTextView)
+        } else {
+            tweetTextView.text = ""
+        }
+
         tweetTextView.becomeFirstResponder()
     }
     
