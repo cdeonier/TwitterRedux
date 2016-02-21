@@ -109,6 +109,29 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 cell.retweetAuthor.hidden = true
                 cell.retweetIndicator.hidden = true
             }
+            
+            setTimeOfCell(cell, tweet: tweet)
+        }
+    }
+    
+    func setTimeOfCell(cell: TweetCell, tweet: Tweet) {
+        let currentTime = NSDate()
+        let difference = currentTime.timeIntervalSinceDate(tweet.createdAt!)
+        
+        let interval = Int(difference)
+        
+        if interval / 86400 > 0 {
+            let days = interval / 86400
+            cell.timeElapsedLabel.text = "\(days)d"
+        } else if interval / 3600 > 0 {
+            let hours = (interval / 3600)
+            cell.timeElapsedLabel.text = "\(hours)h"
+        } else if (interval / 60) % 60 > 0 {
+            let minutes = (interval / 60) % 60
+            cell.timeElapsedLabel.text = "\(minutes)"
+        } else {
+            let seconds = interval % 60
+            cell.timeElapsedLabel.text = "\(seconds)s"
         }
     }
     

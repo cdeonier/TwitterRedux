@@ -28,6 +28,7 @@ class TweetDetailViewController: UIViewController {
     @IBOutlet weak var numberRetweetsLabel: UILabel!
     @IBOutlet weak var numberFavoritesLabel: UILabel!
     @IBOutlet weak var favoriteButton: UIButton!
+    @IBOutlet weak var retweetIndicatorHeightConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,10 +56,22 @@ class TweetDetailViewController: UIViewController {
     func setUpView() {
         if let tweet = tweet {
             nameLabel.text = tweet.user!.name
-            handleLabel.text = tweet.user!.screenname
+            handleLabel.text = "@\(tweet.user!.screenname!)"
             tweetLabel.text = tweet.text
-            timestampLabel.text = tweet.createdAtString
+            timestampLabel.text = tweet.createdAtDisplay
+            avatarImage.setImageWithURL(NSURL(string: (tweet.user?.profileImageUrl)!)!)
+            numberRetweetsLabel.text = "\(tweet.retweetCount!)"
+            numberFavoritesLabel.text = "\(tweet.favoriteCount!)"
             
+            if tweet.retweetingUser == nil {
+                retweetIndicatorHeightConstraint.constant = 0
+                retweetAuthor.hidden = true
+            } else {
+                retweetAuthor.text = tweet.retweetingUser?.name!
+            }
+            
+            avatarImage.layer.cornerRadius = 5
+            avatarImage.clipsToBounds = true
         }
     }
     

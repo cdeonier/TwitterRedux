@@ -15,6 +15,7 @@ class Tweet {
     var text: String?
     var createdAtString: String?
     var createdAt: NSDate?
+    var createdAtDisplay: String?
     var dictionary: NSDictionary?
     var favorited: Bool?
     var retweetCount: Int?
@@ -26,6 +27,9 @@ class Tweet {
         let formatter = NSDateFormatter()
         formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
         createdAtString = formatter.stringFromDate(createdAt!)
+        
+        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+        createdAtDisplay = formatter.stringFromDate(createdAt!)
         
         favoriteCount = 0
         retweetCount = 0
@@ -52,6 +56,9 @@ class Tweet {
         let formatter = NSDateFormatter()
         formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
         createdAt = formatter.dateFromString(createdAtString!)
+        
+        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+        createdAtDisplay = formatter.stringFromDate(createdAt!)
     }
     
     class func tweetsWithArray(array: [NSDictionary]) -> [Tweet] {

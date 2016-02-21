@@ -17,7 +17,8 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var retweetIndicator: UIImageView!
     @IBOutlet weak var retweetAuthor: UILabel!
     @IBOutlet weak var retweetIndicatorHeightConstraint: NSLayoutConstraint!
-
+    @IBOutlet weak var timeElapsedLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
