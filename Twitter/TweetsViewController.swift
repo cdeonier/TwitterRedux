@@ -53,7 +53,7 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func setUpRefreshControl() {
         refreshControl = UIRefreshControl()
-        let action: Selector = "getTweets"
+        let action: Selector = "refreshTweets"
         refreshControl!.addTarget(self, action: action, forControlEvents: UIControlEvents.ValueChanged)
         tableView.insertSubview(refreshControl!, atIndex: 0)
     }
