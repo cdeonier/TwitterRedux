@@ -20,6 +20,18 @@ class Tweet {
     var retweetCount: Int?
     var favoriteCount: Int?
     
+    init() {
+        createdAt = NSDate()
+        
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
+        createdAtString = formatter.stringFromDate(createdAt!)
+        
+        favoriteCount = 0
+        retweetCount = 0
+        favorited = false
+    }
+    
     init(dictionary: NSDictionary) {
         var tweetDictionary: NSDictionary
         if dictionary["retweeted_status"] != nil {

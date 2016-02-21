@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NewTweetDelegate, TweetDelegate {
     
     var tweets: [Tweet]?
     var refreshControl: UIRefreshControl?
@@ -112,14 +112,34 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
     }
     
-    /*
+    func newTweetController(tweet: Tweet) {
+        print("adding tweet" + tweet.text!)
+    }
+    
+    func tweetDetailViewController(tweet: Tweet) {
+        print("do something with this tweet")
+    }
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if (segue.identifier == "newTweet") {
+            let navController = segue.destinationViewController as! UINavigationController
+            let vc = navController.topViewController as! NewTweetViewController
+            vc.delegate = self
+        } else if (segue.identifier == "tweetDetails") {
+            let navController = segue.destinationViewController as! UINavigationController
+            let vc = navController.topViewController as! TweetDetailViewController
+            vc.delegate = self
+            
+            let cell = sender as! UITableViewCell
+            let index = tableView.indexPathForCell(cell)
+            let tweet = tweets![index!.row]
+            vc.tweet = tweet
+        }
+        
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
-
 }
