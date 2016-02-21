@@ -11,6 +11,7 @@ import UIKit
 class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var tweets: [Tweet]?
+    var refreshControl: UIRefreshControl?
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -18,6 +19,7 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         super.viewDidLoad()
 
         setUpTableView()
+        setUpRefreshControl()
         setUpNavigationBar()
         
         getTweets()
@@ -47,6 +49,13 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
     }
     
+    func setUpRefreshControl() {
+        refreshControl = UIRefreshControl()
+        let action: Selector = "getTweets"
+        refreshControl!.addTarget(self, action: action, forControlEvents: UIControlEvents.ValueChanged)
+        tableView.insertSubview(refreshControl!, atIndex: 0)
+    }
+    
     func getTweets() {
         TwitterClient.sharedInstance.homeTimelineWithParams(nil) { (tweets: [Tweet]?, error: NSError?) -> () in
             if let error = error {
@@ -54,6 +63,7 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
             } else {
                 self.tweets = tweets
                 self.tableView.reloadData()
+                self.refreshControl?.endRefreshing()
             }
         }
     }
@@ -83,11 +93,22 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     func configureCell(cell: TweetCell, forRowAtIndexPath: NSIndexPath) {
         let tweet = tweets?[forRowAtIndexPath.row]
         if let tweet = tweet {
-            print(tweet.dictionary)
             cell.tweetLabel.text = tweet.text
             cell.usernameLabel.text = tweet.user?.name
             cell.handleLabel.text = tweet.user?.screenname
             cell.avatarImageView.setImageWithURL(NSURL(string: (tweet.user?.profileImageUrl)!)!)
+            
+            if let retweetingUser = tweet.retweetingUser {
+                cell.retweetIndicator.hidden = false
+                cell.retweetIndicatorHeightConstraint.constant = 18.0
+                cell.retweetAuthor.hidden = false
+                
+                cell.retweetAuthor.text = retweetingUser.name
+            } else {
+                cell.retweetIndicatorHeightConstraint.constant = 0
+                cell.retweetAuthor.hidden = true
+                cell.retweetIndicator.hidden = true
+            }
         }
     }
     

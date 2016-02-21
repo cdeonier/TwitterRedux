@@ -13,11 +13,27 @@ protocol TweetDelegate {
 }
 
 class TweetDetailViewController: UIViewController {
+    
+    var tweet: Tweet?
+    var delegate: TweetDelegate?
 
+    @IBOutlet weak var retweetIndicator: UIImageView!
+    @IBOutlet weak var retweetAuthor: UILabel!
+    @IBOutlet weak var avatarImage: UIImageView!
+    
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var handleLabel: UILabel!
+    @IBOutlet weak var tweetLabel: UILabel!
+    @IBOutlet weak var timestampLabel: UILabel!
+    @IBOutlet weak var numberRetweetsLabel: UILabel!
+    @IBOutlet weak var numberFavoritesLabel: UILabel!
+    @IBOutlet weak var favoriteButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setUpNavigationBar()
+        setUpView()
     }
 
     override func didReceiveMemoryWarning() {
@@ -36,12 +52,36 @@ class TweetDetailViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
     }
     
+    func setUpView() {
+        if let tweet = tweet {
+            nameLabel.text = tweet.user!.name
+            handleLabel.text = tweet.user!.screenname
+            tweetLabel.text = tweet.text
+            timestampLabel.text = tweet.createdAtString
+            
+        }
+    }
+    
     func returnToHome() {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
-    func reply() {
+    @IBAction func reply(sender: AnyObject) {
         
+    }
+
+    @IBAction func retweet(sender: AnyObject) {
+        
+    }
+    
+    @IBAction func favorite(sender: AnyObject) {
+        if favoriteButton.selected {
+            
+        } else {
+            
+        }
+        
+        favoriteButton.selected = !favoriteButton.selected
     }
     
 

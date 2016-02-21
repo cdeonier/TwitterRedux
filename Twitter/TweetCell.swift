@@ -16,12 +16,15 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var tweetLabel: UILabel!
     @IBOutlet weak var retweetIndicator: UIImageView!
     @IBOutlet weak var retweetAuthor: UILabel!
+    @IBOutlet weak var retweetIndicatorHeightConstraint: NSLayoutConstraint!
 
     override func awakeFromNib() {
         super.awakeFromNib()
         
         avatarImageView.layer.cornerRadius = 5
         avatarImageView.clipsToBounds = true
+        
+        self.selectionStyle = UITableViewCellSelectionStyle.None
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
