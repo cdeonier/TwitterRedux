@@ -33,6 +33,9 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
     func setUpTableView() {
         tableView.delegate = self
         tableView.dataSource = self
+        
+        tableView.estimatedRowHeight = 65
+        tableView.rowHeight = UITableViewAutomaticDimension
     }
     
     func populateViewControllers() {
@@ -50,6 +53,9 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
         vc.isHomeTimeline = true
         vc.hamburgerViewController = hamburgerViewController
         
+        let vc2 = profileViewController?.viewControllers.first as! ProfileViewController
+        vc2.hamburgerViewController = hamburgerViewController
+        
         viewControllers.append(profileViewController!)
         viewControllers.append(timelineViewController!)
         viewControllers.append(mentionsViewController!)
@@ -61,8 +67,16 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("MenuCell", forIndexPath: indexPath) as! MenuCell
-        configureCell(cell, forRowAtIndexPath: indexPath)
+        var cell: UITableViewCell
+//        if (indexPath.row == 0) {
+//            cell = tableView.dequeueReusableCellWithIdentifier("ProfileCell", forIndexPath: indexPath)
+//            configureProfileCell(cell as! ProfileCell)
+//        } else {
+            cell = tableView.dequeueReusableCellWithIdentifier("MenuCell", forIndexPath: indexPath)
+            configureCell(cell as! MenuCell, forRowAtIndexPath: indexPath)
+            return cell
+//        }
+        
         return cell
     }
     
@@ -75,13 +89,22 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch forRowAtIndexPath.row {
         case 0:
             cell.menuItemTitle.text = "Profile"
+            cell.menuImage.image = UIImage(named: "User")
         case 1:
             cell.menuItemTitle.text = "Timeline"
+            cell.menuImage.image = UIImage(named: "Home")
         case 2:
             cell.menuItemTitle.text = "Mentions"
+            cell.menuImage.image = UIImage(named: "Mentions")
         default:
             print("Unexpected view controller")
         }
+    }
+    
+    func configureProfileCell(cell: ProfileCell) {
+        cell.avatarImage.setImageWithURL(NSURL(string: User.currentUser!.profileImageUrl!)!)
+        cell.userName.text = User.currentUser!.name
+        cell.userHandle.text = "@\(User.currentUser!.screenname!)"
     }
 
     /*

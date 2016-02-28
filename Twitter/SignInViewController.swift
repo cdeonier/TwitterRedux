@@ -14,7 +14,8 @@ class SignInViewController: UIViewController {
         TwitterClient.sharedInstance.logInWithCompletion() {
             (user: User?, error: NSError?) in
             if user != nil {
-                self.performSegueWithIdentifier("loginSegue", sender: self)
+                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                appDelegate.setUpHamburger()
             } else {
                 print("Error logging in")
             }

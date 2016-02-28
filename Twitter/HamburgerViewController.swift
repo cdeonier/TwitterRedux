@@ -46,6 +46,8 @@ class HamburgerViewController: UIViewController {
                 } else {
                     setUpMentionsNavigationBar()
                 }
+            } else {
+                setUpProfileNavigationBar()
             }
         }
     }
@@ -59,8 +61,10 @@ class HamburgerViewController: UIViewController {
     }
     
     func setUpHomeNavigationBar() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Sign Out", style: .Plain, target: self, action: "signOut")
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .Plain, target: self, action: "newTweet")
+        let tweetController = (self.contentViewController as UINavigationController).viewControllers.first
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Sign Out", style: .Plain, target: tweetController, action: "signOut")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .Plain, target: tweetController, action: "newTweet")
         navigationItem.title = "Home"
         
         navigationController?.navigationBar.barTintColor = UIColor(red: 120/255.0, green: 183/255.0, blue: 234/255.0, alpha: 1.0)
@@ -70,9 +74,24 @@ class HamburgerViewController: UIViewController {
     }
     
     func setUpMentionsNavigationBar() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Sign Out", style: .Plain, target: self, action: "signOut")
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .Plain, target: self, action: "newTweet")
+        let tweetController = (self.contentViewController as UINavigationController).viewControllers.first
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Sign Out", style: .Plain, target: tweetController, action: "signOut")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .Plain, target: tweetController, action: "newTweet")
         navigationItem.title = "Mentions"
+        
+        navigationController?.navigationBar.barTintColor = UIColor(red: 120/255.0, green: 183/255.0, blue: 234/255.0, alpha: 1.0)
+        navigationItem.leftBarButtonItem?.tintColor = UIColor.whiteColor()
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.whiteColor()
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
+    }
+    
+    func setUpProfileNavigationBar() {
+        let profileController = (self.contentViewController as UINavigationController).viewControllers.first
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Sign Out", style: .Plain, target: profileController, action: "signOut")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .Plain, target: profileController, action: "newTweet")
+        navigationItem.title = "Profile"
         
         navigationController?.navigationBar.barTintColor = UIColor(red: 120/255.0, green: 183/255.0, blue: 234/255.0, alpha: 1.0)
         navigationItem.leftBarButtonItem?.tintColor = UIColor.whiteColor()

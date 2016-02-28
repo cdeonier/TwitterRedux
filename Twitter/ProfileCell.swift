@@ -1,18 +1,19 @@
 //
-//  MenuCell.swift
+//  ProfileCell.swift
 //  Twitter
 //
-//  Created by Christian Deonier on 2/24/16.
+//  Created by Christian Deonier on 2/27/16.
 //  Copyright © 2016 codepath. All rights reserved.
 //
 
 import UIKit
 
-class MenuCell: UITableViewCell {
-    
-    @IBOutlet weak var menuImage: UIImageView!
-    @IBOutlet weak var menuItemTitle: UILabel!
+class ProfileCell: UITableViewCell {
 
+    @IBOutlet weak var avatarImage: UIImageView!
+    @IBOutlet weak var userName: UILabel!
+    @IBOutlet weak var userHandle: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

@@ -215,12 +215,13 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tweetCell(tweetCell: TweetCell, didTapAvatar: Bool?) {
-        let profileViewController = storyboard?.instantiateViewControllerWithIdentifier("ProfileViewController")
-        hamburgerViewController?.navigationController?.pushViewController(profileViewController!, animated: true)
-    }
-    
-    func newTweetController(tweet: Tweet) {
-        insertNewTweet(tweet)
+        let indexPath = tableView.indexPathForCell(tweetCell)
+        let tweet = tweets![indexPath!.row]
+        
+        let profileViewController = storyboard?.instantiateViewControllerWithIdentifier("ProfileViewController") as! ProfileViewController
+        profileViewController.user = tweet.user
+        profileViewController.hamburgerViewController = hamburgerViewController
+        hamburgerViewController?.navigationController?.pushViewController(profileViewController, animated: true)
     }
     
     func tweetDetailViewController(tweet: Tweet) {
@@ -237,6 +238,10 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
             tweets![index] = tweet
             tableView.reloadData()
         }
+    }
+    
+    func newTweetController(tweet: Tweet) {
+        insertNewTweet(tweet)
     }
     
     func insertNewTweet(tweet: Tweet) {

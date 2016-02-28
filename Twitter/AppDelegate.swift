@@ -19,28 +19,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "userDidLogOut", name: userDidLogOutNotification, object: nil)
         
         if User.currentUser != nil {
-            let hamburgerViewController = storyboard.instantiateViewControllerWithIdentifier("HamburgerViewController") as!HamburgerViewController
-            let menuViewController = storyboard.instantiateViewControllerWithIdentifier("MenuViewController") as! MenuViewController
-            menuViewController.hamburgerViewController = hamburgerViewController
-            let navMenuViewController = UINavigationController()
-            navMenuViewController.viewControllers = [menuViewController]
-            hamburgerViewController.menuViewController = navMenuViewController
-            
-            let vc = UINavigationController()
-            vc.viewControllers = [hamburgerViewController]
-            
-            window?.rootViewController = vc
-            
-//            // Go to logged in screen
-//            let tweetsController = storyboard.instantiateViewControllerWithIdentifier("TweetsViewController") as! TweetsViewController
-//            let vc = UINavigationController()
-//            vc.viewControllers = [tweetsController]
-//            window?.rootViewController = vc
+            setUpHamburger()
         }
         
-
-        
         return true
+    }
+    
+    func setUpHamburger() {
+        let hamburgerViewController = storyboard.instantiateViewControllerWithIdentifier("HamburgerViewController") as!HamburgerViewController
+        let menuViewController = storyboard.instantiateViewControllerWithIdentifier("MenuViewController") as! MenuViewController
+        menuViewController.hamburgerViewController = hamburgerViewController
+        let navMenuViewController = UINavigationController()
+        navMenuViewController.viewControllers = [menuViewController]
+        hamburgerViewController.menuViewController = navMenuViewController
+        
+        let vc = UINavigationController()
+        vc.viewControllers = [hamburgerViewController]
+        
+        window?.rootViewController = vc
     }
     
     func userDidLogOut() {
