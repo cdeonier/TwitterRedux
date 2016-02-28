@@ -10,10 +10,12 @@ import UIKit
 
 class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NewTweetDelegate, TweetDelegate, TweetCellDelegate, UIScrollViewDelegate {
     
+    var isHomeTimeline: Bool = true
     var tweets: [Tweet]?
     var replyToTweet: Tweet?
     var refreshControl: UIRefreshControl?
     var requestedTweetCount: Int = 20
+    var hamburgerViewController: HamburgerViewController?
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -22,7 +24,6 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
         setUpTableView()
         setUpRefreshControl()
-        setUpNavigationBar()
         
         getTweets()
     }
@@ -40,17 +41,6 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         tableView.rowHeight = UITableViewAutomaticDimension
     }
     
-    func setUpNavigationBar() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Sign Out", style: .Plain, target: self, action: "signOut")
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .Plain, target: self, action: "newTweet")
-        navigationItem.title = "Home"
-        
-        navigationController?.navigationBar.barTintColor = UIColor(red: 120/255.0, green: 183/255.0, blue: 234/255.0, alpha: 1.0)
-        navigationItem.leftBarButtonItem?.tintColor = UIColor.whiteColor()
-        navigationItem.rightBarButtonItem?.tintColor = UIColor.whiteColor()
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
-    }
-    
     func setUpRefreshControl() {
         refreshControl = UIRefreshControl()
         let action: Selector = "refreshTweets"
@@ -65,19 +55,37 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func getTweets() {
         let params = NSDictionary(dictionary: ["count" : requestedTweetCount])
-        TwitterClient.sharedInstance.homeTimelineWithParams(params) { (tweets: [Tweet]?, error: NSError?) -> () in
-            if let error = error {
-                print(error)
-            } else {
-                if self.requestedTweetCount == 20 {
-                    self.tweets = tweets
+        if (isHomeTimeline) {
+            TwitterClient.sharedInstance.homeTimelineWithParams(params) { (tweets: [Tweet]?, error: NSError?) -> () in
+                if let error = error {
+                    print(error)
                 } else {
-                    self.tweets = Tweet.mergeTweets(self.tweets!, additionalTweets: tweets!)
+                    if self.requestedTweetCount == 20 {
+                        self.tweets = tweets
+                    } else {
+                        self.tweets = Tweet.mergeTweets(self.tweets!, additionalTweets: tweets!)
+                    }
+                    
+                    self.tweets = tweets
+                    self.tableView.reloadData()
+                    self.refreshControl?.endRefreshing()
                 }
-                
-                self.tweets = tweets
-                self.tableView.reloadData()
-                self.refreshControl?.endRefreshing()
+            }
+        } else {
+            TwitterClient.sharedInstance.mentionsWithParams(params) { (tweets: [Tweet]?, error: NSError?) -> () in
+                if let error = error {
+                    print(error)
+                } else {
+                    if self.requestedTweetCount == 20 {
+                        self.tweets = tweets
+                    } else {
+                        self.tweets = Tweet.mergeTweets(self.tweets!, additionalTweets: tweets!)
+                    }
+                    
+                    self.tweets = tweets
+                    self.tableView.reloadData()
+                    self.refreshControl?.endRefreshing()
+                }
             }
         }
     }
@@ -204,6 +212,11 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let indexPath = tableView.indexPathForCell(tweetCell)
         replyToTweet = tweets![indexPath!.row]
         self.performSegueWithIdentifier("newTweet", sender: self)
+    }
+    
+    func tweetCell(tweetCell: TweetCell, didTapAvatar: Bool?) {
+        let profileViewController = storyboard?.instantiateViewControllerWithIdentifier("ProfileViewController")
+        hamburgerViewController?.navigationController?.pushViewController(profileViewController!, animated: true)
     }
     
     func newTweetController(tweet: Tweet) {

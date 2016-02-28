@@ -12,6 +12,7 @@ protocol TweetCellDelegate {
     func tweetCell(tweetCell: TweetCell, didReply: Bool?)
     func tweetCell(tweetCell: TweetCell, didRetweet: Bool?)
     func tweetCell(tweetCell: TweetCell, didFavorite: Bool?)
+    func tweetCell(tweetCell: TweetCell, didTapAvatar: Bool?)
 }
 
 class TweetCell: UITableViewCell {
@@ -34,6 +35,10 @@ class TweetCell: UITableViewCell {
         
         avatarImageView.layer.cornerRadius = 5
         avatarImageView.clipsToBounds = true
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:Selector("didTapAvatar"))
+        avatarImageView.userInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(tapGestureRecognizer)
         
         self.selectionStyle = UITableViewCellSelectionStyle.None
     }
@@ -62,6 +67,10 @@ class TweetCell: UITableViewCell {
         } else {
             delegate?.tweetCell(self, didFavorite: true)
         }
+    }
+    
+    func didTapAvatar() {
+        delegate?.tweetCell(self, didTapAvatar: true)
     }
     
 }
